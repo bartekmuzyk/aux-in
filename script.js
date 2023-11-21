@@ -2,17 +2,18 @@ const inputSelector = document.getElementById("input-selection");
 const saveButton = document.getElementById("save-button");
 
 document.addEventListener("DOMContentLoaded", async () => {
-    const deviceToUse = localStorage.getItem("input");
-
-    if (deviceToUse) {
-        alert(deviceToUse);
+    if (!app.isWindows) {
+        document.body.style.background = "#000";
     }
+
+    const inputToUse = localStorage.getItem("input");
 
     const devices = await navigator.mediaDevices.enumerateDevices();
     const inputs = devices.filter(device =>
         device.kind === "audioinput" &&
         !["default", "communications"].includes(device.deviceId)
     );
+    let usedInputName = null;
 
     for (const input of inputs) {
         const button = document.createElement("input");
@@ -20,15 +21,31 @@ document.addEventListener("DOMContentLoaded", async () => {
         button.id = button.value = input.deviceId;
         button.name = "audioinput";
 
+        if (input.deviceId === inputToUse) {
+            button.checked = true;
+            usedInputName = input.label;
+        }
+
         const label = document.createElement("label");
         label.setAttribute("for", input.deviceId);
         label.innerText = input.label;
 
         inputSelector.appendChild(button);
         inputSelector.appendChild(label);
+        inputSelector.appendChild(document.createElement("br"));
     }
 
     saveButton.innerText = "✅ Apply";
+
+    if (inputToUse) {
+        if (usedInputName) {
+            app.reportUsedInput(usedInputName);
+        }
+    } else {
+        app.showMyself();
+        alert("Welcome to Aux In!\n\nSince this program wasn't configured yet, please select the appropriate input that will be looped to your default output device.");
+    }
+
     saveButton.removeAttribute("disabled");
 });
 
@@ -42,6 +59,17 @@ saveButton.onclick = () => {
     }
 
     localStorage.setItem("input", selectedOption.value);
-    alert("Applied!");
     location.reload();
 };
+
+class Volume {
+    current = 100;
+
+    static higher() {
+
+    }
+
+    static lower() {
+
+    }
+}

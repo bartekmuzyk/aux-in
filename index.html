@@ -3,52 +3,20 @@
     <head>
         <meta charset="UTF-8">
         <title>Select input</title>
-        <style>
-            * {
-                outline: none;
-                color: white;
-            }
-
-            html, body {
-                width: 100%;
-                height: 100%;
-                margin: 0;
-                font-family: sans-serif;
-                background: #000;
-            }
-
-            body {
-                display: grid;
-                grid-template-rows: minmax(0, 1fr) 50px;
-                grid-template-columns: 1fr;
-            }
-
-            #input-selection {
-                overflow-y: auto;
-                padding: 5px;
-            }
-
-            #save-button {
-                border: none;
-                background: #222;
-                width: 100%;
-                height: 100%;
-                font-size: 25px;
-                border-radius: 7px 7px 0 0;
-            }
-
-            #save-button:hover {
-                background: #333;
-            }
-
-            #save-button:active {
-                background: #444;
-            }
-        </style>
+        <link rel="stylesheet" href="fonts.css" />
+        <link rel="stylesheet" href="styles.css" />
     </head>
     <body>
-        <div id="input-selection">
-
+        <div id="input-selection"></div>
+        <div id="toolbar">
+            <button onclick="Volume.lower();">-</button>
+            <div style="display: flex; justify-content: center; align-items: center; flex-direction: column; margin: 0 5px;">
+                <span id="volume-display">100%</span>
+                <span style="font-size: 9px;">volume</span>
+            </div>
+            <button onclick="Volume.higher();">+</button>
+            <div style="flex: 1 0 auto;"></div>
+            <button onclick="location.reload();">🔄 Refresh inputs</button>
         </div>
         <button id="save-button" disabled>
             ⏳ Loading
