@@ -1,7 +1,8 @@
-const {app, BrowserWindow, Menu, Tray, nativeImage, ipcMain} = require("electron");
+const {app, BrowserWindow, Menu, Tray, nativeImage, ipcMain, dialog, Notification} = require("electron");
 const path = require("path");
 
 app.setName("Aux In");
+app.setAppUserModelId("Aux In");
 
 /** @type {Electron.CrossProcessExports.BrowserWindow} */
 let win;
@@ -42,6 +43,21 @@ function createWindow() {
         updateTrayMenu();
     });
 
+    ipcMain.on("requireAttention", (_, error) => {
+        trayMenuState.state = "attention";
+        trayMenuState.error = error;
+        updateTrayMenu();
+
+        const notification = new Notification({
+            icon: "assets/tray/attention.png",
+            title: "Aux In encountered an error",
+            subtitle: "Attention is required",
+            body: error
+        });
+        notification.on("click", showAttentionRequiredDialog);
+        notification.show();
+    });
+
     win.loadFile("index.html");
 }
 
@@ -50,7 +66,8 @@ let tray;
 const trayMenuIcon = nativeImage.createFromPath("assets/icon.png").resize({width: 22, height: 22});
 const trayMenuState = {
     currentDevice: null,
-    state: "default"
+    state: "default",
+    error: null
 }
 
 function updateTrayMenu() {
@@ -61,6 +78,14 @@ function updateTrayMenu() {
         label: "Aux In",
         enabled: false
     });
+
+    if (trayMenuState.state === "attention") {
+        template.push({
+            icon: nativeImage.createFromPath("assets/warning.png").resize({width: 14, height: 14}),
+            label: "Attention needed",
+            click: showAttentionRequiredDialog
+        });
+    }
 
     if (process.platform === "win32") {
         template.push(
@@ -90,6 +115,7 @@ function updateTrayMenu() {
 
         switch (trayMenuState.state) {
             case "default":
+            case "attention":
                 template.push({
                     icon: "",
                     label: "Włącz",
@@ -97,16 +123,38 @@ function updateTrayMenu() {
                 });
                 break;
             case "active":
+                template.push({
+                    icon: "",
+                    label: "Wyłącz"
+                });
                  break;
             case "inactive":
-                break;
-            default:
+                template.push({
+                    icon: "",
+                    label: "Włącz"
+                });
                 break;
         }
     }
 
     tray.setContextMenu(Menu.buildFromTemplate(template));
     tray.setImage(`assets/tray/${trayMenuState.state}.png`);
+}
+
+function showAttentionRequiredDialog() {
+    if (trayMenuState.error) {
+        dialog.showMessageBox({
+            type: "warning",
+            icon: "assets/tray/attention.png",
+            title: "Aux In encountered an error",
+            message: "Something went wrong.",
+            detail: trayMenuState.error,
+            buttons: ["Close"],
+            defaultId: 0,
+            cancelId: 0,
+            noLink: true
+        });
+    }
 }
 
 app.whenReady().then(() => {

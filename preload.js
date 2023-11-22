@@ -9,5 +9,11 @@ contextBridge.exposeInMainWorld("app", {
     },
     reportUsedInput(inputName) {
         ipcRenderer.send("reportUsedInput", inputName);
+    },
+    onActivityStateChanged(cb) {
+        ipcRenderer.on("onActivityStateChanged", (_, state) => cb(state));
+    },
+    requireAttention(error) {
+        ipcRenderer.send("requireAttention", error);
     }
 });

@@ -40,6 +40,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (inputToUse) {
         if (usedInputName) {
             app.reportUsedInput(usedInputName);
+        } else {
+            app.requireAttention("Previously set input cannot be found now. Please select something else.");
+            localStorage.removeItem("input");
         }
     } else {
         app.showMyself();
@@ -61,6 +64,10 @@ saveButton.onclick = () => {
     localStorage.setItem("input", selectedOption.value);
     location.reload();
 };
+
+app.onActivityStateChanged(state => {
+
+});
 
 class Volume {
     current = 100;
