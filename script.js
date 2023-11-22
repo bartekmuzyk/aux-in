@@ -3,7 +3,7 @@ const saveButton = document.getElementById("save-button");
 
 document.addEventListener("DOMContentLoaded", async () => {
     if (!app.isWindows) {
-        document.body.style.background = "#000";
+        document.body.style.background = "#111111f7";
     }
 
     const inputToUse = localStorage.getItem("input");

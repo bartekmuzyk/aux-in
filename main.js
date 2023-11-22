@@ -74,6 +74,7 @@ function updateTrayMenu() {
         );
     } else {
         template.push(
+            {type: "separator"},
             {
                 label: "Change input device",
                 click() {
