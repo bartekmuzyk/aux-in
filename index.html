@@ -7,16 +7,18 @@
         <link rel="stylesheet" href="styles.css" />
     </head>
     <body>
+        <audio id="player" hidden></audio>
         <div id="input-selection"></div>
         <div id="toolbar">
-            <button onclick="Volume.lower();">-</button>
+            <button id="volume-lower-btn">-</button>
             <div style="display: flex; justify-content: center; align-items: center; flex-direction: column; margin: 0 5px;">
                 <span id="volume-display">100%</span>
                 <span style="font-size: 9px;">volume</span>
             </div>
-            <button onclick="Volume.higher();">+</button>
+            <button id="volume-higher-btn">+</button>
             <div style="flex: 1 0 auto;"></div>
-            <button onclick="location.reload();">🔄 Refresh inputs</button>
+            <button onclick="location.reload();">🔄 Reload</button>
+            <button onclick="location.reload();">🔄 Reload</button>
         </div>
         <button id="save-button" disabled>
             ⏳ Loading

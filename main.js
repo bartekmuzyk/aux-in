@@ -162,6 +162,19 @@ app.whenReady().then(() => {
 
     tray = new Tray("assets/tray/default.png");
     tray.setToolTip("Aux In");
+    tray.on("click", () => {
+        switch (trayMenuState.state) {
+            case "active":
+                trayMenuState.state = "inactive";
+                break;
+            case "inactive":
+                trayMenuState.state = "active";
+                break;
+        }
+
+        win.webContents.postMessage("onActivityStateChanged", trayMenuState.state);
+        updateTrayMenu();
+    })
     updateTrayMenu(false);
 });
 
