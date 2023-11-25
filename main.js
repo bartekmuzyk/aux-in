@@ -29,10 +29,6 @@ function createWindow() {
         win.hide();
     });
 
-    if (process.env.DEVTOOLS === "1") {
-        win.webContents.openDevTools({mode: "detach"});
-    }
-
     ipcMain.on("showMyself", () => {
         win.show();
     });
@@ -58,6 +54,10 @@ function createWindow() {
         notification.show();
     });
 
+    ipcMain.on("openDevTools", () => {
+        win.webContents.openDevTools({mode: "detach"});
+    });
+
     win.loadFile("index.html");
 }
 
@@ -68,6 +68,20 @@ const trayMenuState = {
     currentDevice: null,
     state: "default",
     error: null
+}
+
+function toggleState() {
+    switch (trayMenuState.state) {
+        case "active":
+            trayMenuState.state = "inactive";
+            break;
+        case "inactive":
+            trayMenuState.state = "active";
+            break;
+    }
+
+    win.webContents.postMessage("onActivityStateChanged", trayMenuState.state);
+    updateTrayMenu();
 }
 
 function updateTrayMenu() {
@@ -98,6 +112,8 @@ function updateTrayMenu() {
             }
         );
     } else {
+        const deviceLabel = trayMenuState.currentDevice;
+
         template.push(
             {type: "separator"},
             {
@@ -107,7 +123,10 @@ function updateTrayMenu() {
                 }
             },
             {
-                label: trayMenuState.currentDevice ?? "Click to configure",
+                label: deviceLabel ?
+                    deviceLabel.length > 30 ? `${deviceLabel.substring(0, 31)}...` : deviceLabel
+                    :
+                    "Click to configure",
                 enabled: false
             },
             {type: "separator"}
@@ -117,21 +136,23 @@ function updateTrayMenu() {
             case "default":
             case "attention":
                 template.push({
-                    icon: "",
+                    icon: "assets/tray/state indicators/off.png",
                     label: "Włącz",
                     enabled: false
                 });
                 break;
             case "active":
                 template.push({
-                    icon: "",
-                    label: "Wyłącz"
+                    icon: "assets/tray/state indicators/on.png",
+                    label: "Wyłącz",
+                    click: toggleState
                 });
                  break;
             case "inactive":
                 template.push({
-                    icon: "",
-                    label: "Włącz"
+                    icon: "assets/tray/state indicators/off.png",
+                    label: "Włącz",
+                    click: toggleState
                 });
                 break;
         }
@@ -162,19 +183,7 @@ app.whenReady().then(() => {
 
     tray = new Tray("assets/tray/default.png");
     tray.setToolTip("Aux In");
-    tray.on("click", () => {
-        switch (trayMenuState.state) {
-            case "active":
-                trayMenuState.state = "inactive";
-                break;
-            case "inactive":
-                trayMenuState.state = "active";
-                break;
-        }
-
-        win.webContents.postMessage("onActivityStateChanged", trayMenuState.state);
-        updateTrayMenu();
-    })
+    tray.on("click", toggleState);
     updateTrayMenu(false);
 });
 

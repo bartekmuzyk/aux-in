@@ -15,5 +15,8 @@ contextBridge.exposeInMainWorld("app", {
     },
     requireAttention(error) {
         ipcRenderer.send("requireAttention", error);
+    },
+    openDevTools() {
+        ipcRenderer.send("openDevTools");
     }
 });
