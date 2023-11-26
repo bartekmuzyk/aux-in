@@ -4,6 +4,8 @@ const path = require("path");
 app.setName("Aux In");
 app.setAppUserModelId("Aux In");
 
+const getAssetsFile = filePath => path.join(__dirname, "assets", filePath);
+
 /** @type {Electron.CrossProcessExports.BrowserWindow} */
 let win;
 
@@ -13,7 +15,7 @@ function createWindow() {
         height: 600,
         resizable: false,
         show: false,
-        icon: "assets/icon.png",
+        icon: getAssetsFile("icon.png"),
         backgroundMaterial: "mica",
         transparent: true,
         webPreferences: {
@@ -45,7 +47,7 @@ function createWindow() {
         updateTrayMenu();
 
         const notification = new Notification({
-            icon: "assets/tray/attention.png",
+            icon: getAssetsFile("tray/attention.png"),
             title: "Aux In encountered an error",
             subtitle: "Attention is required",
             body: error
@@ -63,7 +65,7 @@ function createWindow() {
 
 /** @type {Electron.CrossProcessExports.Tray} */
 let tray;
-const trayMenuIcon = nativeImage.createFromPath("assets/icon.png").resize({width: 22, height: 22});
+const trayMenuIcon = nativeImage.createFromPath(getAssetsFile("icon.png")).resize({width: 22, height: 22});
 const trayMenuState = {
     currentDevice: null,
     state: "default",
@@ -95,7 +97,7 @@ function updateTrayMenu() {
 
     if (trayMenuState.state === "attention") {
         template.push({
-            icon: nativeImage.createFromPath("assets/warning.png").resize({width: 14, height: 14}),
+            icon: nativeImage.createFromPath(getAssetsFile("warning.png")).resize({width: 14, height: 14}),
             label: "Attention needed",
             click: showAttentionRequiredDialog
         });
@@ -136,21 +138,21 @@ function updateTrayMenu() {
             case "default":
             case "attention":
                 template.push({
-                    icon: "assets/tray/state indicators/off.png",
+                    icon: getAssetsFile("tray/state indicators/off.png"),
                     label: "Włącz",
                     enabled: false
                 });
                 break;
             case "active":
                 template.push({
-                    icon: "assets/tray/state indicators/on.png",
+                    icon: getAssetsFile("tray/state indicators/on.png"),
                     label: "Wyłącz",
                     click: toggleState
                 });
                  break;
             case "inactive":
                 template.push({
-                    icon: "assets/tray/state indicators/off.png",
+                    icon: getAssetsFile("tray/state indicators/off.png"),
                     label: "Włącz",
                     click: toggleState
                 });
@@ -159,14 +161,14 @@ function updateTrayMenu() {
     }
 
     tray.setContextMenu(Menu.buildFromTemplate(template));
-    tray.setImage(`assets/tray/${trayMenuState.state}.png`);
+    tray.setImage(getAssetsFile(`tray/${trayMenuState.state}.png`));
 }
 
 function showAttentionRequiredDialog() {
     if (trayMenuState.error) {
         dialog.showMessageBox({
             type: "warning",
-            icon: "assets/tray/attention.png",
+            icon: getAssetsFile("tray/attention.png"),
             title: "Aux In encountered an error",
             message: "Something went wrong.",
             detail: trayMenuState.error,
@@ -181,7 +183,7 @@ function showAttentionRequiredDialog() {
 app.whenReady().then(() => {
     createWindow();
 
-    tray = new Tray("assets/tray/default.png");
+    tray = new Tray(getAssetsFile("tray/default.png"));
     tray.setToolTip("Aux In");
     tray.on("click", toggleState);
     updateTrayMenu(false);
