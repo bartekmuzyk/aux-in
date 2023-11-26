@@ -139,21 +139,21 @@ function updateTrayMenu() {
             case "attention":
                 template.push({
                     icon: getAssetsFile("tray/state indicators/off.png"),
-                    label: "Włącz",
+                    label: "Switch on",
                     enabled: false
                 });
                 break;
             case "active":
                 template.push({
                     icon: getAssetsFile("tray/state indicators/on.png"),
-                    label: "Wyłącz",
+                    label: "Switch off",
                     click: toggleState
                 });
                  break;
             case "inactive":
                 template.push({
                     icon: getAssetsFile("tray/state indicators/off.png"),
-                    label: "Włącz",
+                    label: "Switch on",
                     click: toggleState
                 });
                 break;
