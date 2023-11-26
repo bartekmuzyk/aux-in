@@ -6,8 +6,9 @@
   "scripts": {
     "start": "electron .",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dist-win": "electron-builder build --win",
-    "dist-linux": "electron-builder build --linux"
+    "dist-win": "electron-builder build -w",
+    "dist-linux": "electron-builder build -l",
+    "dist": "electron-builder build -wl"
   },
   "author": "bmbl",
   "license": "ISC",
